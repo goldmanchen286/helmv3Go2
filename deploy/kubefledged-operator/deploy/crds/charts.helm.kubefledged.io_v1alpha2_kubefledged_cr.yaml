@@ -1,0 +1,44 @@
+apiVersion: charts.helm.kubefledged.io/v1alpha2
+kind: KubeFledged
+metadata:
+  name: kube-fledged
+  namespace: kube-fledged
+spec:
+  # Defaults defined in <project_dir>/helm-charts/kubefledged/values.yaml
+  controllerReplicaCount: 1
+  webhookServerReplicaCount: 1
+  controller:
+    hostNetwork: false
+    priorityClassName: ""
+  webhookServer:
+    enable: true
+    hostNetwork: false
+    priorityClassName: ""
+  image:
+    kubefledgedControllerRepository: docker.io/senthilrch/kubefledged-controller
+    kubefledgedCRIClientRepository: docker.io/senthilrch/kubefledged-cri-client
+    busyboxImageRepository: senthilrch/busybox
+    busyboxImageVersion: "1.35.0"
+    kubefledgedWebhookServerRepository: docker.io/senthilrch/kubefledged-webhook-server
+    pullPolicy: Always
+  command: 
+    kubefledgedControllerCommand: ["/opt/bin/kubefledged-controller"]
+    kubefledgedWebhookServerCommand: ["/opt/bin/kubefledged-webhook-server"]
+  args:
+    controllerLogLevel: INFO
+    controllerImagePullDeadlineDuration: 5m
+    controllerImageCacheRefreshFrequency: 15m
+    controllerImagePullPolicy: IfNotPresent
+    controllerServiceAccountName: ""
+    controllerImageDeleteJobHostNetwork: false
+    controllerJobPriorityClassName: ""
+    controllerJobRetentionPolicy: "delete"
+    controllerCRISocketPath: ""
+    webhookServerLogLevel: INFO
+    webhookServerCertFile: /var/run/secrets/webhook-server/tls.crt
+    webhookServerKeyFile: /var/run/secrets/webhook-server/tls.key
+    webhookServerPort: 443
+  validatingWebhookCABundle:
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
